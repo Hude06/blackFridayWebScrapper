@@ -29,12 +29,14 @@ async function run() {
           const title = node.querySelector('h2 span')?.textContent || 'N/A';
           const price = node.querySelector('.a-offscreen')?.textContent || 'N/A';
           const OGPrice = node.querySelector('.a-text-price')?.textContent || 'N/A';
-          // Parsing prices using a more robust method
+          const linkElement = node.querySelector('.a-link-normal')
+          const link = linkElement ? linkElement.href : 'N/A';
+           // Parsing prices using a more robust method
           const numericPrice = parseFloat(price.replace(/[^\d.]/g, ''));
           const numericOGPrice = parseFloat(OGPrice.replace(/[^\d.]/g, ''));
           let fraction = ((numericOGPrice - numericPrice) / numericOGPrice) * 100;
           fraction = Math.floor(fraction)
-          productArray.push({ title, price, OGPrice, fraction });
+          productArray.push({ title, price, OGPrice, fraction, link });
         }
 
         return productArray;
@@ -52,6 +54,7 @@ async function run() {
       }
       
       console.log('Best Item:', bestItem);
+      
     }
   } catch (error) {
     console.error('Error:', error);
