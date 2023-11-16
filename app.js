@@ -23,11 +23,10 @@ async function run() {
       // Use a more specific selector for product nodes
       const products = await page.evaluate(() => {
         const productNodes = document.querySelectorAll('.s-result-item');
-
         const productArray = [];
         for (const node of productNodes) {
           const title = node.querySelector('h2 span')?.textContent || 'N/A';
-          const price = node.querySelector('.a-offscreen')?.textContent || 'N/A';
+          let price = node.querySelector('.a-offscreen')?.textContent || 'N/A';
           const OGPrice = node.querySelector('.a-text-price')?.textContent || 'N/A';
           const linkElement = node.querySelector('.a-link-normal')
           const link = linkElement ? linkElement.href : 'N/A';
@@ -36,25 +35,39 @@ async function run() {
           const numericOGPrice = parseFloat(OGPrice.replace(/[^\d.]/g, ''));
           let fraction = ((numericOGPrice - numericPrice) / numericOGPrice) * 100;
           fraction = Math.floor(fraction)
+          if (fraction === null) {
+            fraction = 0;
+          }
           productArray.push({ title, price, OGPrice, fraction, link });
         }
-
         return productArray;
       });
-
-      console.log(products);
       let maxFraction = -1;
+      let lowestPrice = 10000;
       let bestItem = null;
-      
+      let cheapestItem = null;
+      function isNumber(value) {
+        return typeof value === 'number';
+      }
       for (const product of products) {
         if (product.fraction > maxFraction) {
-          maxFraction = product.fraction;
-          bestItem = product;
+            maxFraction = product.fraction;
+            bestItem = product;
         }
       }
-      
-      console.log('Best Item:', bestItem);
-      
+      for (const product of products) {
+        if (isNaN(parseFloat(product.price.replace(/[^\d.]/g, ''))) !== false) {
+        } else {
+          if (parseFloat(product.price.replace(/[^\d.]/g, '')) < lowestPrice) {
+            lowestPrice = parseFloat(product.price.replace(/[^\d.]/g, ''))
+            cheapestItem = product
+          }
+
+        }
+      } 
+      console.log('Best Item:', bestItem);      
+      console.log('Cheapet Item:', cheapestItem);      
+
     }
   } catch (error) {
     console.error('Error:', error);
