@@ -1,7 +1,14 @@
+const express = require('express');
+const { exec } = require('child_process');
+const bodyParser = require('body-parser');
+const cors = require('cors'); // Import the cors middleware
+
+
 const puppeteer = require('puppeteer');
 const readline = require('readline')
 const fs = require('fs') 
-export async function run(link) {
+let bestItem2 = []
+async function run(link) {
   const browser = await puppeteer.launch();
 
   try {
@@ -52,7 +59,9 @@ export async function run(link) {
         }
       } 
       console.log('Best Item:', bestItem);      
-      console.log('Cheapet Item:', cheapestItem); 
+      console.log('Cheapet Item:', cheapestItem);
+      bestItem2 = bestItem
+      return(bestItem)
     }
   } catch (error) {
     console.error('Error:', error);
@@ -62,3 +71,35 @@ export async function run(link) {
   }
 }
 
+
+
+const app = express();
+const port = 3000;
+
+app.use(cors()); // Enable CORS for all routes
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+app.post('/run-command', (req, res) => {
+  const { commandVariable } = req.body;
+
+  if (!commandVariable) {
+    return res.status(400).send('Missing commandVariable in form submission');
+  }
+
+  exec(`echo ${commandVariable}`, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing command: ${error.message}`);
+      return res.status(500).send('Internal Server Error');
+    }
+    run(stdout)
+    console.log(`Command output: ${stdout}`);
+    setTimeout(() => {
+        res.send(`Command result:` + JSON.stringify(bestItem2));
+    }, 10000);
+    });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+});

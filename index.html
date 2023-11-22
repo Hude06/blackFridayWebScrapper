@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Command Runner</title>
+</head>
+<body>
+  <h1>Command Runner</h1>
+  <form id="commandForm">
+    <label for="commandVariable">Enter Variable:</label>
+    <input type="text" id="commandVariable" name="commandVariable" required>
+    <button type="button" onclick="runCommand()">Run Command</button>
+  </form>
+
+  <div id="resultContainer"></div>
+
+  <script>
+    function runCommand() {
+      const commandVariable = document.getElementById('commandVariable').value;
+
+      fetch('http://localhost:3000/run-command', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `commandVariable=${encodeURIComponent(commandVariable)}`,
+      })
+      .then(response => response.text())
+      .then(result => {
+        document.getElementById('resultContainer').innerText = result;
+      })
+      .catch(error => {
+        console.error('Error:', error.message);
+      });
+    }
+  </script>
+</body>
+</html>

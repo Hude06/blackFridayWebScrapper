@@ -1,0 +1,15 @@
+{
+  "name": "webscrapping",
+  "version": "1.0.0",
+  "description": "In this project, I made a simple application that uses Puppeteer to search the web for the best deals on Amazon for Black Friday. It first asks for the user's input and then searches that on Amazon, retrieving all the results' titles, original prices, and the new prices. Afterward, it calculates a fraction. The program then determines which item has the best fraction or discount and displays it to you.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
+}
