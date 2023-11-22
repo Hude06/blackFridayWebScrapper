@@ -74,7 +74,7 @@ async function run(link) {
 
 
 const app = express();
-const port = 3000;
+const port = 5500;
 
 app.use(cors()); // Enable CORS for all routes
 app.use(bodyParser.urlencoded({ extended: true }));
